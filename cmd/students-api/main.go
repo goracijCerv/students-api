@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/goracijCerv/students-api/internal/config"
 )
@@ -23,11 +28,28 @@ func main() {
 		Addr:    cfg.Addr,
 		Handler: router,
 	}
-	fmt.Println("Servidor iniciado en el puerto ", cfg.Addr)
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal("fail to strat server")
+	slog.Info("Servidor iniciado en el puerto ", slog.String("adress", cfg.Addr))
+	done := make(chan os.Signal, 1)
+
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			log.Fatal("fail to start server")
+		}
+	}()
+	<-done
+
+	slog.Info("apagagando el servidor")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("Hubo un problema al tratar de cerar el servidor ", slog.String("error", err.Error()))
 	}
+
+	slog.Info("apagado del server correcto")
 
 }
 
