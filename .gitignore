@@ -25,6 +25,6 @@ go.work.sum
 .env
 
 ##la carpeta de storage
-storage
+/storage
 #La carpeta de config
 /config

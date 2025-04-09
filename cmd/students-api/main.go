@@ -12,6 +12,7 @@ import (
 
 	"github.com/goracijCerv/students-api/internal/config"
 	"github.com/goracijCerv/students-api/internal/http/handlers/student"
+	"github.com/goracijCerv/students-api/internal/storage/sqlite"
 )
 
 func main() {
@@ -19,6 +20,12 @@ func main() {
 	cfg := config.MustLoad()
 
 	//setup a la base de datos
+	_, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slog.Info("Se ha inicializado corractamente la bd", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 	//setup router
 	router := http.NewServeMux()
 	router.HandleFunc("GET /", student.Welcome())
