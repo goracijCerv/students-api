@@ -7,8 +7,10 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/goracijCerv/students-api/internal/storage"
 	"github.com/goracijCerv/students-api/internal/types"
 	"github.com/goracijCerv/students-api/internal/utils/response"
 )
@@ -19,7 +21,7 @@ func Welcome() http.HandlerFunc {
 	}
 }
 
-func New() http.HandlerFunc {
+func New(storage storage.Storage) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var student types.Student
@@ -40,8 +42,44 @@ func New() http.HandlerFunc {
 			response.WriteJson(w, http.StatusBadRequest, response.ValidationError(validateErros))
 			return
 		}
+
+		//Incercion de los datos
+		id, err := storage.CreateStudent(student.Name, student.LastName, student.Email, student.Number, student.Age)
+		if err != nil {
+			slog.Error("user dont created something went wrong")
+			response.WriteJson(w, http.StatusInternalServerError, response.GeneralError(err))
+			return
+		}
+		slog.Info("user created suceessfuly", slog.String("userId", fmt.Sprint(id)))
 		response.WriteJson(w, http.StatusCreated, map[string]string{"success": "OK"})
 	}
 }
 
-//https://youtu.be/OGhQhFKvMiM?t=5716
+func GetById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("obteniendo la información del usuario", slog.String("userId", fmt.Sprint(id)))
+
+		num, err := strconv.Atoi(id)
+		if err != nil {
+			slog.Error("id tiene un formato invalido")
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		st, err := storage.GetStudentById(int64(num))
+		if err != nil {
+			slog.Error("Error al intentar obtener información")
+			if err.Error() == "no student found" {
+				response.WriteJson(w, http.StatusNotFound, err)
+				return
+			}
+
+			response.WriteJson(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		slog.Info("Se ha optenido informacion del usuario correctamente", slog.String("userId", fmt.Sprint(id)))
+		response.WriteJson(w, http.StatusFound, st)
+	}
+}
