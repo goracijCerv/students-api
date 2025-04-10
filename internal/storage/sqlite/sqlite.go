@@ -3,6 +3,7 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/goracijCerv/students-api/internal/config"
 	"github.com/goracijCerv/students-api/internal/types"
@@ -76,6 +77,37 @@ func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
 	}
 
 	return student, nil
+
+}
+
+func (s *Sqlite) GetAllStudents() ([]types.Student, error) {
+	smtp, err := s.Db.Prepare(`SELECT * FROM students`)
+	if err != nil {
+		return nil, err
+	}
+	defer smtp.Close()
+
+	rows, err := smtp.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var students []types.Student
+
+	for rows.Next() {
+		var student types.Student
+		err := rows.Scan(&student.Id, &student.Name, &student.LastName, &student.Email, &student.Number, &student.Age)
+		if err != nil {
+			slog.Error("Something went wrong in the  scan")
+			return nil, err
+		}
+		students = append(students, student)
+
+	}
+
+	return students, nil
 
 }
 
