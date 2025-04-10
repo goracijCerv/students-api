@@ -97,4 +97,46 @@ func GetListStudents(storage storage.Storage) http.HandlerFunc {
 	}
 }
 
+func UpdateById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("editando el usario con el id", slog.String("userId", fmt.Sprint(id)))
+
+		num, err := strconv.Atoi(id)
+		if err != nil {
+			slog.Error("id tiene un formato invalido")
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		var student types.Student
+		err = json.NewDecoder(r.Body).Decode(&student)
+		if errors.Is(err, io.EOF) {
+			slog.Error("error en json decoder")
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(fmt.Errorf("empty body")))
+			return
+		}
+		student.Id = int64(num)
+		//Validacion de la petición
+		if err = validator.New().Struct(student); err != nil {
+			slog.Error("error de validación")
+			validateErros := err.(validator.ValidationErrors)
+			response.WriteJson(w, http.StatusBadRequest, response.ValidationError(validateErros))
+			return
+		}
+
+		//Updateo de  usuario
+		err = storage.UpdateStudent(int64(num), student.Name, student.LastName, student.Email, student.Number, student.Age)
+		if err != nil {
+			slog.Error("Error en el querry")
+			response.WriteJson(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		slog.Info("La información se updateo correctamente")
+		response.WriteJson(w, http.StatusOK, student)
+
+	}
+}
+
 // https://youtu.be/OGhQhFKvMiM?t=9475
