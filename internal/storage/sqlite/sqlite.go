@@ -144,4 +144,25 @@ func (s *Sqlite) UpdateStudent(id int64, name string, lastname string, email str
 
 }
 
+func (s *Sqlite) DeleteStudentById(id int64) error {
+	smtp, err := s.Db.Prepare(`DELETE FROM students WHERE id = ?`)
+	if err != nil {
+		return err
+	}
+
+	defer smtp.Close()
+
+	result, err := smtp.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // https://stackoverflow.com/questions/43580131/exec-gcc-executable-file-not-found-in-path-when-trying-go-build si ocurre un error con la gcc Y este comando go env -w CGO_ENABLED=1

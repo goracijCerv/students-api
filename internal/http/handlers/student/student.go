@@ -139,4 +139,28 @@ func UpdateById(storage storage.Storage) http.HandlerFunc {
 	}
 }
 
+func DeleteStudent(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("Borrando un elemento ", slog.String("userId", fmt.Sprint(id)))
+
+		num, err := strconv.Atoi(id)
+		if err != nil {
+			slog.Error("id no tiene un formato valido")
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		err = storage.DeleteStudentById(int64(num))
+		if err != nil {
+			slog.Error("Error in the query")
+			response.WriteJson(w, http.StatusInternalServerError, response.GeneralError(err))
+			return
+		}
+
+		slog.Info("Se borro correctamente")
+		response.WriteJson(w, http.StatusOK, map[string]string{"succes": "OK"})
+	}
+}
+
 // https://youtu.be/OGhQhFKvMiM?t=9475
