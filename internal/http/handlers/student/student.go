@@ -222,5 +222,3 @@ func DeleteStudent(storage storage.Storage) http.HandlerFunc {
 		response.WriteJson(w, http.StatusOK, map[string]string{"succes": "OK"})
 	}
 }
-
-// https://youtu.be/OGhQhFKvMiM?t=9475
