@@ -1,7 +1,13 @@
+// @title Students API
+// @version 1.0
+// @description Bueno esta es una api, para practicar buenas practicas en go y que entoeria esta hecha de forma que es escalable.
+// @host localhost:8082
+// @BasePath /api/
 package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -10,9 +16,11 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/goracijCerv/students-api/docs"
 	"github.com/goracijCerv/students-api/internal/config"
 	"github.com/goracijCerv/students-api/internal/http/handlers/student"
 	"github.com/goracijCerv/students-api/internal/storage/sqlite"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
@@ -34,6 +42,11 @@ func main() {
 	router.HandleFunc("GET /api/student", student.GetListStudents(storage))
 	router.HandleFunc("PUT /api/student/{id}", student.UpdateById(storage))
 	router.HandleFunc("DELETE /api/student/{id}", student.DeleteStudent(storage))
+	// Serve Swagger UI
+	swaggerURL := fmt.Sprintf("http://%s/swagger/doc.json", cfg.Addr) // Construct the URL to swagger.json dynamically
+	router.HandleFunc("GET /swagger/", httpSwagger.Handler(
+		httpSwagger.URL(swaggerURL),
+	))
 	//setup server
 	server := http.Server{
 		Addr:    cfg.Addr,
@@ -65,3 +78,5 @@ func main() {
 }
 
 //Para pode correr el programa go run cmd/students-api/main.go -config config/local.yaml
+
+//Paquetes que se utilizaron para la creacion de la documentacion de swagger

@@ -1,0 +1,196 @@
+definitions:
+  response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  types.Student:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+    required:
+    - age
+    - email
+    - lastname
+    - name
+    - number
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      description: Da un mensaje de bienvenida a la api
+      responses:
+        "200":
+          description: Bienvenido a la students api
+          schema:
+            type: string
+      summary: De vuelve un mensaje de bienvenida
+      tags:
+      - welcome
+  /api/student:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene todos los datos de los estudiantes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de estudiantes
+          schema:
+            items:
+              $ref: '#/definitions/types.Student'
+            type: array
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Obtiene todos los estudiantes
+      tags:
+      - student
+    post:
+      consumes:
+      - application/json
+      description: Obtiene los datos de la estructura student y crea un nuevo estudiante
+      parameters:
+      - description: Un objeto de tipo estudiante o student y este nos servira para
+          crear no es necesario el id
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/types.Student'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Mensjae de que todo salio bien
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Cuerpo de  la petición no valido
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Crea un nuevo estudiante
+      tags:
+      - student
+  /api/student/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Borra un estudiante con el id que se le pasa
+      parameters:
+      - description: id del estudiante
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mensaje de que salio bien
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error en el path
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Borra un estudiante
+      tags:
+      - student
+    get:
+      consumes:
+      - application/json
+      description: Obtiene los datos del estudiante espesificado por id
+      parameters:
+      - description: id del estudiante
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Student'
+        "400":
+          description: Error en el path
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: No se encontro el recurso
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Obtiene la informacion de un estudiante por id
+      tags:
+      - student
+    put:
+      consumes:
+      - application/json
+      description: se actualiza la informacioón del cliente
+      parameters:
+      - description: id del estudiante
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: la nueva informacion del student
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/types.Student'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mensaje de que salio bien
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error en el path
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Le hace un update al student
+      tags:
+      - student
+swagger: "2.0"
