@@ -80,3 +80,6 @@ func main() {
 //Para pode correr el programa go run cmd/students-api/main.go -config config/local.yaml
 
 //Paquetes que se utilizaron para la creacion de la documentacion de swagger
+// swag init -g cmd/students-api/main.go genera la documentacion de swagger
+// go get -u github.com/swaggo/http-swagger
+// go install github.com/swaggo/swag/cmd/swag@latest
