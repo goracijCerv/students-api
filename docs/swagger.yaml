@@ -1,3 +1,4 @@
+basePath: /api/
 definitions:
   response.Response:
     properties:
@@ -5,6 +6,13 @@ definitions:
         type: string
       status:
         type: string
+    type: object
+  types.EmailReciber:
+    properties:
+      to:
+        type: string
+    required:
+    - to
     type: object
   types.Student:
     properties:
@@ -27,8 +35,13 @@ definitions:
     - name
     - number
     type: object
+host: localhost:8082
 info:
   contact: {}
+  description: Bueno esta es una api, para practicar buenas practicas en go y que
+    entoeria esta hecha de forma que es escalable.
+  title: Students API
+  version: "1.0"
 paths:
   /:
     get:
@@ -41,7 +54,39 @@ paths:
       summary: De vuelve un mensaje de bienvenida
       tags:
       - welcome
-  /api/student:
+  /sendEmail:
+    post:
+      consumes:
+      - application/json
+      description: Envia un correo electronico, recive un email para poder hacer esto
+      parameters:
+      - description: a quien se le enviara el correo
+        in: body
+        name: emailTo
+        required: true
+        schema:
+          $ref: '#/definitions/types.EmailReciber'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mensaje de que salio bien
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error en el body
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Error del servidor
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Envia un correo electronico
+      tags:
+      - Email
+  /student:
     get:
       consumes:
       - application/json
@@ -94,7 +139,7 @@ paths:
       summary: Crea un nuevo estudiante
       tags:
       - student
-  /api/student/{id}:
+  /student/{id}:
     delete:
       consumes:
       - application/json

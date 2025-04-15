@@ -37,7 +37,7 @@ func Welcome() http.HandlerFunc {
 // @Success 201 {object} map[string]string "Mensjae de que todo salio bien"
 // @Failure 400 {object} response.Response "Cuerpo de  la petición no valido"
 // @Failure 500 {object} response.Response "Error del servidor"
-// @Router /api/student [post]
+// @Router /student [post]
 func New(storage storage.Storage) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +82,7 @@ func New(storage storage.Storage) http.HandlerFunc {
 // @Failure 400 {object} response.Response "Error en el path"
 // @Failure 404 {object} response.Response "No se encontro el recurso"
 // @Failure 500 {object} response.Response "Error del servidor"
-// @Router /api/student/{id} [get]
+// @Router /student/{id} [get]
 func GetById(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -120,7 +120,7 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 // @Produce json
 // @Success 200 {array} types.Student "Lista de estudiantes"
 // @Failure 500 {object} response.Response "Error del servidor"
-// @Router /api/student [get]
+// @Router /student [get]
 func GetListStudents(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slog.Info("Obteniendo la lista de estudiantes")
@@ -145,7 +145,7 @@ func GetListStudents(storage storage.Storage) http.HandlerFunc {
 // @Success 200 {object} map[string]string "Mensaje de que salio bien"
 // @Failure 400 {object} response.Response "Error en el path"
 // @Failure 500 {object} response.Response "Error del servidor"
-// @Router /api/student/{id} [put]
+// @Router /student/{id} [put]
 func UpdateById(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -198,7 +198,7 @@ func UpdateById(storage storage.Storage) http.HandlerFunc {
 // @Success 200 {object} map[string]string "Mensaje de que salio bien"
 // @Failure 400 {object} response.Response "Error en el path"
 // @Failure 500 {object} response.Response "Error del servidor"
-// @Router /api/student/{id} [DELETE]
+// @Router /student/{id} [DELETE]
 func DeleteStudent(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")

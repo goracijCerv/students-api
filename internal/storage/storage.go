@@ -8,4 +8,5 @@ type Storage interface {
 	GetAllStudents() ([]types.Student, error)
 	UpdateStudent(id int64, name string, lastname string, email string, number int, age int) error
 	DeleteStudentById(id int64) error
+	GetEmailTemplate(name string) (string, error)
 }

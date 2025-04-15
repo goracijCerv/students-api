@@ -18,8 +18,10 @@ import (
 
 	_ "github.com/goracijCerv/students-api/docs"
 	"github.com/goracijCerv/students-api/internal/config"
+	"github.com/goracijCerv/students-api/internal/http/handlers/email"
 	"github.com/goracijCerv/students-api/internal/http/handlers/student"
 	"github.com/goracijCerv/students-api/internal/storage/sqlite"
+	"github.com/goracijCerv/students-api/internal/utils"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -33,6 +35,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//setup de smtp sender
+	emailHelper := utils.New(cfg)
+
 	slog.Info("Se ha inicializado corractamente la bd", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 	//setup router
 	router := http.NewServeMux()
@@ -42,6 +47,7 @@ func main() {
 	router.HandleFunc("GET /api/student", student.GetListStudents(storage))
 	router.HandleFunc("PUT /api/student/{id}", student.UpdateById(storage))
 	router.HandleFunc("DELETE /api/student/{id}", student.DeleteStudent(storage))
+	router.HandleFunc("POST /api/sendEmail", email.SendEmail(storage, *emailHelper))
 	// Serve Swagger UI
 	swaggerURL := fmt.Sprintf("http://%s/swagger/doc.json", cfg.Addr) // Construct the URL to swagger.json dynamically
 	router.HandleFunc("GET /swagger/", httpSwagger.Handler(

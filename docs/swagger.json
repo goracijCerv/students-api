@@ -1,8 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Bueno esta es una api, para practicar buenas practicas en go y que entoeria esta hecha de forma que es escalable.",
+        "title": "Students API",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:8082",
+    "basePath": "/api/",
     "paths": {
         "/": {
             "get": {
@@ -21,7 +26,56 @@
                 }
             }
         },
-        "/api/student": {
+        "/sendEmail": {
+            "post": {
+                "description": "Envia un correo electronico, recive un email para poder hacer esto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Envia un correo electronico",
+                "parameters": [
+                    {
+                        "description": "a quien se le enviara el correo",
+                        "name": "emailTo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.EmailReciber"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mensaje de que salio bien",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en el body",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/student": {
             "get": {
                 "description": "Obtiene todos los datos de los estudiantes",
                 "consumes": [
@@ -100,7 +154,7 @@
                 }
             }
         },
-        "/api/student/{id}": {
+        "/student/{id}": {
             "get": {
                 "description": "Obtiene los datos del estudiante espesificado por id",
                 "consumes": [
@@ -258,6 +312,17 @@
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.EmailReciber": {
+            "type": "object",
+            "required": [
+                "to"
+            ],
+            "properties": {
+                "to": {
                     "type": "string"
                 }
             }

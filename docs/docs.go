@@ -32,7 +32,56 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/student": {
+        "/sendEmail": {
+            "post": {
+                "description": "Envia un correo electronico, recive un email para poder hacer esto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Envia un correo electronico",
+                "parameters": [
+                    {
+                        "description": "a quien se le enviara el correo",
+                        "name": "emailTo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.EmailReciber"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mensaje de que salio bien",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en el body",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/student": {
             "get": {
                 "description": "Obtiene todos los datos de los estudiantes",
                 "consumes": [
@@ -111,7 +160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/student/{id}": {
+        "/student/{id}": {
             "get": {
                 "description": "Obtiene los datos del estudiante espesificado por id",
                 "consumes": [
@@ -273,6 +322,17 @@ const docTemplate = `{
                 }
             }
         },
+        "types.EmailReciber": {
+            "type": "object",
+            "required": [
+                "to"
+            ],
+            "properties": {
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
         "types.Student": {
             "type": "object",
             "required": [
@@ -308,12 +368,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:8082",
+	BasePath:         "/api/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Students API",
+	Description:      "Bueno esta es una api, para practicar buenas practicas en go y que entoeria esta hecha de forma que es escalable.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

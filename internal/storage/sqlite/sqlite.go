@@ -165,4 +165,24 @@ func (s *Sqlite) DeleteStudentById(id int64) error {
 	return nil
 }
 
+func (s *Sqlite) GetEmailTemplate(name string) (string, error) {
+	sqlqr, err := s.Db.Prepare(`SELECT body_html FROM email_templates WHERE name = ?`)
+	if err != nil {
+		return "", err
+	}
+
+	defer sqlqr.Close()
+	var template string
+	err = sqlqr.QueryRow(name).Scan(&template)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("no student found")
+		}
+		return "", err
+	}
+
+	return template, nil
+
+}
+
 // https://stackoverflow.com/questions/43580131/exec-gcc-executable-file-not-found-in-path-when-trying-go-build si ocurre un error con la gcc Y este comando go env -w CGO_ENABLED=1

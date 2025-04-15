@@ -8,3 +8,18 @@ type Student struct {
 	Number   int    `json:"number" validate:"required"`
 	Age      int    `json:"age" validate:"required"`
 }
+
+type EmailData struct {
+	Subject       string
+	Greeting      string
+	Message       string
+	ActionDetails string
+	NextSteps     []string
+	RecipientName string
+	SenderName    string
+	SenderTitle   string
+}
+
+type EmailReciber struct {
+	To string `json:"to" validate:"required"`
+}
