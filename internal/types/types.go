@@ -21,5 +21,13 @@ type EmailData struct {
 }
 
 type EmailReciber struct {
-	To string `json:"to" validate:"required"`
+	To            string   `json:"to" validate:"required"`
+	Subject       string   `json:"subject"`
+	Greeting      string   `json:"greeting"`
+	Message       string   `json:"message" validate:"required"`
+	ActionDetails string   `json:"actionDetails"`
+	NextSteps     []string `json:"steps"`
+	RecipientName string   `json:"recipientName"`
+	SenderName    string   `json:"senderName"`
+	SenderTitle   string   `json:"senderTitle"`
 }

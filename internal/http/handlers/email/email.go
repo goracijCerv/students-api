@@ -58,18 +58,14 @@ func SendEmail(storage storage.Storage, email utils.EmailHelperSmtp) http.Handle
 		}
 
 		emailData := types.EmailData{
-			Subject:       "Registration Confirmation",
-			Greeting:      "Hello John Doe,",
-			Message:       "Thank you for registering for the upcoming course! We're excited to have you onboard.",
-			ActionDetails: "Your registration was successfully completed. Please check your inbox for further instructions.",
-			NextSteps: []string{
-				"1. Check your email for confirmation and schedule details.",
-				"2. Prepare any required documents for the first session.",
-				"3. Get ready to start learning!",
-			},
-			RecipientName: "John Doe",
-			SenderName:    "The School Administration",
-			SenderTitle:   "Your School Team",
+			Subject:       emailto.Subject,
+			Greeting:      emailto.Greeting,
+			Message:       emailto.Message,
+			ActionDetails: emailto.ActionDetails,
+			NextSteps:     emailto.NextSteps,
+			RecipientName: emailto.RecipientName,
+			SenderName:    emailto.SenderName,
+			SenderTitle:   emailto.SenderTitle,
 		}
 
 		tmplt, err := template.New("email").Parse(emailT)
@@ -93,7 +89,7 @@ func SendEmail(storage storage.Storage, email utils.EmailHelperSmtp) http.Handle
 			response.WriteJson(w, http.StatusInternalServerError, response.GeneralError(err))
 			return
 		}
-		slog.Error("Se ha enviado correctamente el correo electronico")
+		slog.Info("Se ha enviado correctamente el correo electronico")
 		response.WriteJson(w, http.StatusOK, map[string]string{"succes": "OK"})
 
 	}
