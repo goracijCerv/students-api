@@ -369,7 +369,7 @@ func TestUpdateById_ValidateErros(t *testing.T) {
 
 }
 
-func TestUpdateById_StorageErros(t *testing.T) {
+func TestUpdateById_StorageErro(t *testing.T) {
 
 	studentData := types.Student{
 		Id:       1,
@@ -388,4 +388,41 @@ func TestUpdateById_StorageErros(t *testing.T) {
 		t.Errorf("expected 500, got %d", rr.Code)
 	}
 
+}
+
+func TestDeleteStudent_Succes(t *testing.T) {
+	mock := &mockStorage{}
+	req := test.NewRequest(t, http.MethodDelete, "/api/student/", nil)
+	req.SetPathValue("id", "1")
+	rr := test.RunHandler(t, student.DeleteStudent(mock), req)
+
+	if !mock.called {
+		t.Errorf("not called")
+	}
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("expected 200, got %d", rr.Code)
+	}
+}
+
+func TestDeleteStudent_NotValidPath(t *testing.T) {
+
+	req := test.NewRequest(t, http.MethodDelete, "/api/student/", nil)
+	req.SetPathValue("id", "1aa")
+	rr := test.RunHandler(t, student.DeleteStudent(&mockStorage{}), req)
+
+	if rr.Code != http.StatusBadRequest {
+		t.Errorf("expected 400, got %d", rr.Code)
+	}
+}
+
+func TestDeleteStudent_StorageError(t *testing.T) {
+	mock := &mockStorage{err: errors.New("db error")}
+	req := test.NewRequest(t, http.MethodDelete, "/api/student/", nil)
+	req.SetPathValue("id", "1")
+	rr := test.RunHandler(t, student.DeleteStudent(mock), req)
+
+	if rr.Code != http.StatusInternalServerError {
+		t.Errorf("expected 500, got %d", rr.Code)
+	}
 }
